@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: tomcat
-        image: rkalluru/b39-stack-tomcat:v2
+        image: lakshmaiah212/stack_tomcat:v2
         resources:
           requests:
             memory: "512Mi"
