@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: studnet-http
+spec:
+  containers:
+  - name: studenthttpd
+    image: lakshmaiah212/stack_httpd:v1
+    livenessProbe:
+      httpGet:
+        path: /index.html
+        port: 80
+      initialDelaySeconds: 15
+      timeoutSeconds: 2
+      failureThreshold: 5
+      periodSeconds: 1
+    readinessProbe:
+      httpGet:
+        path: /index.html
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 10

@@ -1,0 +1,98 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-root-cred
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: cm9vdA==
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-disk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mariadb-rs
+  labels:
+    app: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - name: mariadb
+        image: mariadb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-root-cred
+              key: MYSQL_ROOT_PASSWORD
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+        ports:
+          - containerPort: 3306
+        volumeMounts:
+        - mountPath: "/var/lib/mysql"
+          name: mariadb-disk
+      volumes:
+      - name: mariadb-disk
+        persistentVolumeClaim:
+          claimName: mariadb-disk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stack-db-int
+spec:
+  selector:
+    app: mariadb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-schema-load
+spec:
+  template:
+    spec:
+      containers:
+      - name: centos
+        image: rkalluru/b39-db-job:v1
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-root-cred
+              key: MYSQL_ROOT_PASSWORD
+        - name: DBHOST 
+          value: stack-db-int
+      restartPolicy: Never
+  backoffLimit: 4

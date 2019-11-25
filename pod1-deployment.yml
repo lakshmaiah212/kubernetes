@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: httpd
+    tier: frontend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: httpd
+      tier: frontend
+  template:
+    metadata:
+      labels:
+       tier: fronted
+    spec:
+      containers:
+      - name: httpd
+        image: lakshmaiah212/stack_httpd:v1
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: 80
+        initialDelaySeconds: 15
+        timeoutSeconds: 2
+        failureThreshold: 5
+        periodSeconds: 1
