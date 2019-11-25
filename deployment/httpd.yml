@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: rkalluru/b39-stack-httpd:v3
+        image: lakshmaiah212/stack_httpd:v1
         env:
           - name: APP_SERVER
             value: stack-tomcat-int
