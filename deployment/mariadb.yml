@@ -85,7 +85,7 @@ spec:
     spec:
       containers:
       - name: centos
-        image: rkalluru/b39-db-job:v1
+        image: lakshmaiah212/stack_db-setup:v1
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
