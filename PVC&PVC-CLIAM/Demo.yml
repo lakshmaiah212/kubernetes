@@ -1,0 +1,18 @@
+# steps
+# 1.create PV
+# 2. Create PVC
+# 3. POD that uses the pvc -> pv
+'''
+Reclaim Policy:
+1.Retain
+2.Recycle
+3.Delete
+
+'''
+
+# AccessModes:
+'''
+1.RWO => The frist node only have access to write&read access to that PV reamaining nodes have only read only access.
+2.RWM  ==> all the pods in nodes can have read and write access to the pv
+3.RO  ==> all the nodes have read only access
+...

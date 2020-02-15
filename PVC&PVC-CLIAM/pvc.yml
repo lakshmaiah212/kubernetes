@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "1Gi"
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: pvc-demo
+spec:
+  containers:
+    - name: demo 
+      image: centos
+      command: ["sleep","10000"]
+      volumeMounts:
+        - name: mariadb-pvc
+          mountPath: "/opt/data"
+  volumes:
+    - name: mariadb-pvc
+      persistentVolumeClaim:
+        claimName: mariadb-pvc
+  initContainers:
+    - name: mariadb-pvc
+      image: centos
+      command:  ["touch","/opt/data/demo"]
+      volumeMounts:
+        - name: mariadb-pvc
+          mountPath: "/opt/data"
